@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+       https://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/context
+       https://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+    <!--1.扫描service下的包-->
+    <context:component-scan base-package="com.cpjxuejava.service"/>
+
+    <!--2.将我们所有的业务类，注入到Spring，可以通过配置，或者注解实现-->
+    <bean id="BookServiceImpl" class="com.cpjxuejava.service.impl.BookServiceImpl">
+        <property name="bookMapper" ref="bookMapper"/>
+    </bean>
+
+    <!--3.声明式事务配置-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!--注入数据源-->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!--4.aop事务支持-->
+    <tx:advice id="myAdvice" transaction-manager="transactionManager">
+        <!--tx:attributes：配置事务属性-->
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+
+
+    <!--配置aop-->
+    <aop:config>
+        <!--配置切入点表达式：指定哪些包中类，要使用事务
+            id:切入点表达式的名称,唯一值
+            expression:切入点表达式，指定哪些类要使用事务，aspectj会创建代理对象
+
+            com.bjpowenode.service
+            com.crm.service
+            com.service
+        -->
+        <aop:pointcut id="servicePt" expression="execution(* com.cpjxuejava.service..*.*(..))"/>
+        <!--配置增强器：关联advice和pointcut
+            advice-ref:通知，上面tx:advice的配置
+            pointcut-ref:切入点表达式的id
+        -->
+        <aop:advisor advice-ref="myAdvice" pointcut-ref="servicePt"></aop:advisor>
+    </aop:config>
+</beans>
