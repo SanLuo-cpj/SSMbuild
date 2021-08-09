@@ -22,6 +22,8 @@
   <body>
   <h3>
     <a href="${pageContext.request.contextPath}/book/allBook">进入到书籍页面</a>
+    <br/>
+    <a href="/myWeb/login.jsp">进入到登陆页面</a>
   </h3>
   </body>
 </html>

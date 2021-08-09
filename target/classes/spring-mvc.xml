@@ -19,4 +19,28 @@
     </bean>
 
 
+    <!--声明拦截器： 拦截器可以有0或多个-->
+    <mvc:interceptors>
+        <!--声明第一个拦截器-->
+        <mvc:interceptor>
+            <!--指定拦截的请求uri地址
+                path:就是uri地址，可以使用通配符 **
+                ** ：表示任意的字符，文件或者多级目录和目录中的文件
+                http://localhost:8080/myWeb/user/listUser.do
+                http://localhost:8080/myWeb/student/addStudent.do
+            -->
+            <!--包括这个请求下面的所有请求-->
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/j"/>
+            <!--声明拦截对象-->
+            <bean class="com.cpjxuejava.handler.MyInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+
+    <!--放行静态资源文件-->
+    <mvc:default-servlet-handler/>
+    
+    <mvc:resources location="/static/" mapping="/static/**"/>
+
 </beans>
